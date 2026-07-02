@@ -33,39 +33,65 @@ The development model is still React-based:
 Simple screen example:
 
 ```tsx
+// Import React so this file can define a React component.
 import React from "react";
+// Import the React Native building blocks used by this screen.
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 
+// Export a screen component so it can be used by navigation or the app entry point.
 export function HomeScreen() {
+  // Return the UI tree rendered by this screen with SafeAreaView as the root.
   return (
     <SafeAreaView style={styles.page}>
+      {/* View creates a container for the card content. */}
       <View style={styles.card}>
+        {/* Text renders the main heading on the screen. */}
         <Text style={styles.title}>Dashboard</Text>
+        {/* Text renders secondary supporting content below the heading. */}
         <Text style={styles.subtitle}>Mobile app screen built with React Native</Text>
+      {/* Close the card container. */}
       </View>
+    {/* Close the safe area container. */}
     </SafeAreaView>
   );
 }
 
+// Create a centralized style object for this screen.
 const styles = StyleSheet.create({
+  // Style for the full page container.
   page: {
+    // Make the page fill all available screen height.
     flex: 1,
+    // Apply a light background color to the full screen.
     backgroundColor: "#f5f7fb",
+    // Add spacing around the screen content.
     padding: 16,
   },
+  // Style for the white dashboard card.
   card: {
+    // Set the card background color.
     backgroundColor: "#ffffff",
+    // Round the card corners.
     borderRadius: 12,
+    // Add inner spacing inside the card.
     padding: 16,
   },
+  // Style for the main title text.
   title: {
+    // Set title text size.
     fontSize: 22,
+    // Make the title bold.
     fontWeight: "700",
+    // Set title color.
     color: "#111827",
   },
+  // Style for the subtitle text.
   subtitle: {
+    // Add space between title and subtitle.
     marginTop: 6,
+    // Set subtitle text size.
     fontSize: 14,
+    // Set subtitle color.
     color: "#6b7280",
   },
 });
@@ -132,48 +158,79 @@ Instead of repeating the same card layout in multiple screens, create a reusable
 Example:
 
 ```tsx
+// Import React to define a reusable component.
 import React from "react";
+// Import React Native primitives used by the card.
 import { StyleSheet, Text, View } from "react-native";
 
+// Define the props accepted by the MetricCard component.
 type MetricCardProps = {
+  // Label describes what metric is being shown.
   label: string;
+  // Value is the formatted value displayed in the card.
   value: string;
+  // Status controls the visual color of the value.
   status?: "good" | "warning" | "danger";
 };
 
+// Export a reusable card component for metric-style values.
 export function MetricCard({ label, value, status = "good" }: MetricCardProps) {
+  // Return the visual structure of the metric card with View as the root.
   return (
     <View style={styles.card}>
+      {/* Render the metric label. */}
       <Text style={styles.label}>{label}</Text>
+      {/* Render the metric value and apply status-specific color. */}
       <Text style={[styles.value, styles[status]]}>{value}</Text>
+    {/* Close the card container. */}
     </View>
   );
 }
 
+// Create local styles for the MetricCard component.
 const styles = StyleSheet.create({
+  // Card container style.
   card: {
+    // Set card background.
     backgroundColor: "#ffffff",
+    // Round card corners.
     borderRadius: 10,
+    // Add inner spacing.
     padding: 14,
+    // Add a thin border.
     borderWidth: 1,
+    // Set border color.
     borderColor: "#e5e7eb",
   },
+  // Label text style.
   label: {
+    // Set label font size.
     fontSize: 13,
+    // Use muted color for label text.
     color: "#6b7280",
   },
+  // Value text style.
   value: {
+    // Add space above the value.
     marginTop: 8,
+    // Make the value visually prominent.
     fontSize: 24,
+    // Use bold weight for the value.
     fontWeight: "700",
   },
+  // Color used when the metric is healthy.
   good: {
+    // Green value color.
     color: "#047857",
   },
+  // Color used when the metric needs attention.
   warning: {
+    // Amber value color.
     color: "#b45309",
   },
+  // Color used when the metric is risky.
   danger: {
+    // Red value color.
     color: "#b91c1c",
   },
 });
@@ -182,7 +239,9 @@ const styles = StyleSheet.create({
 Usage:
 
 ```tsx
+{/* Render a healthy success-rate metric card. */}
 <MetricCard label="Success Rate" value="96%" status="good" />
+{/* Render a warning-state open-issues metric card. */}
 <MetricCard label="Open Issues" value="12" status="warning" />
 ```
 
@@ -202,34 +261,55 @@ A screen should combine smaller components and control the flow for that page.
 Example:
 
 ```tsx
+// Import React to create the screen component.
 import React from "react";
+// Import React Native primitives used to render the screen.
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+// Import the reusable MetricCard component.
 import { MetricCard } from "../components/MetricCard";
 
+// Export the dashboard screen.
 export function DashboardScreen() {
+  // Return scrollable screen content with ScrollView as the root.
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Render the screen heading. */}
       <Text style={styles.heading}>Dashboard Overview</Text>
 
+      {/* Group metric cards inside a vertical grid container. */}
       <View style={styles.grid}>
+        {/* Render a revenue metric card. */}
         <MetricCard label="Revenue" value="$42K" />
+        {/* Render a delivery metric card. */}
         <MetricCard label="Delivery" value="94%" />
+        {/* Render a warning metric card for risk items. */}
         <MetricCard label="Risk Items" value="7" status="warning" />
+      {/* Close the grid container. */}
       </View>
+    {/* Close the scrollable page. */}
     </ScrollView>
   );
 }
 
+// Create local styles for this dashboard screen.
 const styles = StyleSheet.create({
+  // Style applied to ScrollView content.
   container: {
+    // Add screen padding.
     padding: 16,
+    // Add spacing between direct child elements.
     gap: 16,
   },
+  // Style for the page heading.
   heading: {
+    // Set heading size.
     fontSize: 24,
+    // Make heading bold.
     fontWeight: "700",
   },
+  // Style for the metric-card group.
   grid: {
+    // Add spacing between metric cards.
     gap: 12,
   },
 });
@@ -251,9 +331,13 @@ Common navigation patterns:
 Example route names:
 
 ```ts
+// Define all stack route names and the params each route accepts.
 export type RootStackParamList = {
+  // Home route does not require route params.
   Home: undefined;
+  // Details route requires an itemId string.
   Details: { itemId: string };
+  // Settings route does not require route params.
   Settings: undefined;
 };
 ```
@@ -261,15 +345,19 @@ export type RootStackParamList = {
 Example navigation:
 
 ```tsx
+// Navigate to the Details screen and pass the selected item ID.
 navigation.navigate("Details", { itemId: "1001" });
 ```
 
 Example receiving params:
 
 ```tsx
+// Define the Details screen and receive navigation route props.
 export function DetailsScreen({ route }) {
+  // Read itemId from route params.
   const { itemId } = route.params;
 
+  // Render the selected item ID on the screen.
   return <Text>Selected item: {itemId}</Text>;
 }
 ```
@@ -308,15 +396,21 @@ Screen
 Example API client:
 
 ```ts
+// Store the backend base URL in one place.
 const API_BASE_URL = "https://example-api.com";
 
+// Create a reusable GET helper with a generic response type.
 export async function apiGet<T>(path: string): Promise<T> {
+  // Make the network request by joining base URL and path.
   const response = await fetch(`${API_BASE_URL}${path}`);
 
+  // Treat non-2xx responses as errors.
   if (!response.ok) {
+    // Throw an error with the HTTP status for easier debugging.
     throw new Error(`Request failed with status ${response.status}`);
   }
 
+  // Parse and return the JSON response as the expected type.
   return response.json() as Promise<T>;
 }
 ```
@@ -324,15 +418,22 @@ export async function apiGet<T>(path: string): Promise<T> {
 Example service:
 
 ```ts
+// Import the shared API GET helper.
 import { apiGet } from "./apiClient";
 
+// Define the expected dashboard summary response shape.
 export type DashboardSummary = {
+  // Total number of items shown on the dashboard.
   totalItems: number;
+  // Success percentage returned by the backend.
   successRate: number;
+  // Number of open issues returned by the backend.
   openIssues: number;
 };
 
+// Create a service function for loading dashboard summary data.
 export function fetchDashboardSummary() {
+  // Call the dashboard summary endpoint and type the response.
   return apiGet<DashboardSummary>("/dashboard/summary");
 }
 ```
@@ -340,43 +441,69 @@ export function fetchDashboardSummary() {
 Example hook:
 
 ```tsx
+// Import React hooks needed for lifecycle and state.
 import { useEffect, useState } from "react";
+// Import the service function and response type.
 import { fetchDashboardSummary, type DashboardSummary } from "../services/dashboardService";
 
+// Create a custom hook that owns dashboard loading logic.
 export function useDashboardSummary() {
+  // Store the loaded dashboard data.
   const [data, setData] = useState<DashboardSummary | null>(null);
+  // Store whether the request is currently loading.
   const [isLoading, setIsLoading] = useState(true);
+  // Store an error message when the request fails.
   const [error, setError] = useState<string | null>(null);
 
+  // Run the data load when the hook is first used.
   useEffect(() => {
+    // Track whether the component is still mounted.
     let isMounted = true;
 
+    // Define the async data-loading function.
     async function loadData() {
+      // Start the protected request block.
       try {
+        // Mark the screen as loading.
         setIsLoading(true);
+        // Clear any old error before starting a new request.
         setError(null);
+        // Call the service layer to fetch dashboard data.
         const result = await fetchDashboardSummary();
+        // Only update state if the component is still mounted.
         if (isMounted) {
+          // Store the successful API result.
           setData(result);
         }
+      // Handle request or parsing errors.
       } catch (caughtError) {
+        // Only update state if the component is still mounted.
         if (isMounted) {
+          // Store a readable error message.
           setError(caughtError instanceof Error ? caughtError.message : "Unable to load data");
         }
+      // Always run cleanup for the loading flag.
       } finally {
+        // Only update state if the component is still mounted.
         if (isMounted) {
+          // Stop the loading state.
           setIsLoading(false);
         }
       }
     }
 
+    // Trigger the data load.
     loadData();
 
+    // Cleanup runs when the component using this hook unmounts.
     return () => {
+      // Prevent state updates after unmount.
       isMounted = false;
     };
+  // Empty dependency array means this effect runs once on mount.
   }, []);
 
+  // Return data and request state to the screen.
   return { data, isLoading, error };
 }
 ```
@@ -384,26 +511,39 @@ export function useDashboardSummary() {
 Example screen usage:
 
 ```tsx
+// Define the dashboard screen component.
 export function DashboardScreen() {
+  // Use the custom hook to load dashboard data and request status.
   const { data, isLoading, error } = useDashboardSummary();
 
+  // Show loading UI while the request is in progress.
   if (isLoading) {
+    // Return a reusable loading component.
     return <LoadingState message="Loading dashboard..." />;
   }
 
+  // Show error UI if the request failed.
   if (error) {
+    // Return a reusable error component with the error message.
     return <ErrorState message={error} />;
   }
 
+  // Show empty UI if the request succeeded but no data is available.
   if (!data) {
+    // Return a reusable empty-state component.
     return <EmptyState message="No dashboard data available." />;
   }
 
+  // Render the successful dashboard state using a Fragment root.
   return (
     <>
+      {/* Show total item count. */}
       <MetricCard label="Total Items" value={String(data.totalItems)} />
+      {/* Show success-rate percentage. */}
       <MetricCard label="Success Rate" value={`${data.successRate}%`} />
+      {/* Show open issue count. */}
       <MetricCard label="Open Issues" value={String(data.openIssues)} />
+    {/* Close the fragment. */}
     </>
   );
 }
@@ -433,6 +573,7 @@ React Native state can be handled at different levels.
 ### Local State Example
 
 ```tsx
+// Create local state for the current search text.
 const [searchText, setSearchText] = useState("");
 ```
 
@@ -443,13 +584,18 @@ Use local state when only one component or screen needs the data.
 Use a custom hook when multiple screens need the same loading logic.
 
 ```tsx
+// Export a custom hook that owns search-query behavior.
 export function useSearchQuery() {
+  // Store the current search query.
   const [query, setQuery] = useState("");
 
+  // Define a helper function to reset the query.
   function clearQuery() {
+    // Set query back to an empty string.
     setQuery("");
   }
 
+  // Expose the query value, setter, and clear helper.
   return { query, setQuery, clearQuery };
 }
 ```
@@ -459,26 +605,40 @@ export function useSearchQuery() {
 Use context for cross-screen values such as theme or logged-in user details.
 
 ```tsx
+// Import React and hooks needed to create context.
 import React, { createContext, useContext, useState } from "react";
 
+// Define the allowed theme modes.
 type ThemeMode = "light" | "dark";
 
+// Create a context for theme state and updater function.
 const ThemeContext = createContext<{
+  // Current theme mode.
   mode: ThemeMode;
+  // Function used to update the theme mode.
   setMode: (mode: ThemeMode) => void;
+// Default value is null so usage outside the provider can be detected.
 } | null>(null);
 
+// Create a provider component that wraps screens needing theme access.
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // Store the current theme mode.
   const [mode, setMode] = useState<ThemeMode>("light");
 
+  // Provide mode and setMode to all children.
   return <ThemeContext.Provider value={{ mode, setMode }}>{children}</ThemeContext.Provider>;
 }
 
+// Create a custom hook for consuming theme context.
 export function useThemeMode() {
+  // Read the current context value.
   const context = useContext(ThemeContext);
+  // Guard against using the hook outside ThemeProvider.
   if (!context) {
+    // Throw a clear developer error.
     throw new Error("useThemeMode must be used inside ThemeProvider");
   }
+  // Return the validated context.
   return context;
 }
 ```
@@ -506,18 +666,25 @@ Every API-driven screen should define:
 Example:
 
 ```tsx
+// Check whether the request is currently loading.
 if (isLoading) {
+  // Render loading UI while data is being fetched.
   return <LoadingState message="Loading records..." />;
 }
 
+// Check whether the request failed.
 if (error) {
+  // Render error UI and provide retry support.
   return <ErrorState message={error} onRetry={reload} />;
 }
 
+// Check whether the request succeeded with no records.
 if (records.length === 0) {
+  // Render empty-state UI when there is no data to show.
   return <EmptyState message="No records found." />;
 }
 
+// Render the normal success state when records are available.
 return <RecordList records={records} />;
 ```
 
@@ -543,16 +710,26 @@ Common layout concepts:
 Example:
 
 ```tsx
+// Create styles for reusable layout patterns.
 const styles = StyleSheet.create({
+  // Row layout style for horizontally aligned content.
   row: {
+    // Arrange children from left to right.
     flexDirection: "row",
+    // Align children vertically in the center.
     alignItems: "center",
+    // Push first and last child to opposite ends.
     justifyContent: "space-between",
+    // Add spacing between children.
     gap: 12,
   },
+  // Page container style.
   page: {
+    // Fill the available screen area.
     flex: 1,
+    // Add page padding.
     padding: 16,
+    // Set a light page background.
     backgroundColor: "#f9fafb",
   },
 });
@@ -570,19 +747,31 @@ const styles = StyleSheet.create({
 Example design tokens:
 
 ```ts
+// Define shared colors used across the app.
 export const colors = {
+  // App background color.
   background: "#f9fafb",
+  // Card or surface background color.
   surface: "#ffffff",
+  // Main text color.
   text: "#111827",
+  // Secondary text color.
   mutedText: "#6b7280",
+  // Primary action color.
   primary: "#2563eb",
 };
 
+// Define shared spacing values used across the app.
 export const spacing = {
+  // Extra-small spacing.
   xs: 4,
+  // Small spacing.
   sm: 8,
+  // Medium spacing.
   md: 16,
+  // Large spacing.
   lg: 24,
+  // Extra-large spacing.
   xl: 32,
 };
 ```
@@ -594,14 +783,21 @@ For lists, `FlatList` is preferred over manually mapping a large array inside `S
 Example:
 
 ```tsx
+// Import FlatList for efficient list rendering.
 import { FlatList } from "react-native";
 
+// Define a reusable list component for records.
 export function RecordList({ records }) {
+  // Return a virtualized FlatList for better list performance.
   return (
     <FlatList
+      // Provide the array of records to render.
       data={records}
+      // Provide a stable unique key for each row.
       keyExtractor={(item) => item.id}
+      // Render each row using the RecordRow component.
       renderItem={({ item }) => <RecordRow record={item} />}
+    // Close the FlatList component.
     />
   );
 }
@@ -620,13 +816,19 @@ Performance practices:
 Example with memoized row:
 
 ```tsx
+// Import React so React.memo can be used.
 import React from "react";
 
+// Memoize the row so it avoids unnecessary re-renders when props do not change.
 const RecordRow = React.memo(function RecordRow({ record }) {
+  // Return row UI for a single record with View as the root.
   return (
     <View>
+      {/* Render the record title. */}
       <Text>{record.title}</Text>
+      {/* Render the record status. */}
       <Text>{record.status}</Text>
+    {/* Close the row container. */}
     </View>
   );
 });
@@ -647,8 +849,11 @@ React Native debugging should be done across multiple layers of the development 
 Useful logging pattern:
 
 ```tsx
+// Log when dashboard loading starts.
 console.log("[DashboardScreen] Loading dashboard summary");
+// Log the successful API response for debugging.
 console.log("[DashboardScreen] API response", response);
+// Log the API failure with error details.
 console.error("[DashboardScreen] API failed", error);
 ```
 
@@ -678,14 +883,18 @@ Install JS dependencies
 Common commands:
 
 ```bash
+# Install JavaScript dependencies from package.json.
 npm install
+# Build and run the Android app on a connected emulator or device.
 npm run android
 ```
 
 Or with React Native CLI:
 
 ```bash
+# Start the Metro development server.
 npx react-native start
+# Build, install, and launch the Android app.
 npx react-native run-android
 ```
 
